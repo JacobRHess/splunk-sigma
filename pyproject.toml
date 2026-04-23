@@ -7,7 +7,6 @@ name = "splunk-sigma"
 version = "0.1.0"
 description = "Splunk app that runs Sigma detection rules natively via a custom | sigma search command"
 requires-python = ">=3.7"
-license = { text = "MIT" }
 authors = [{ name = "Jacob Hess" }]
 
 [project.optional-dependencies]
@@ -17,6 +16,11 @@ dev = [
     "ruff>=0.1.0",
     "splunk-sdk>=2.0",
 ]
+
+# This project is a Splunk app, not an installable Python package. We use
+# pyproject.toml only for dev tooling (pytest/ruff config + dev deps).
+[tool.setuptools]
+packages = []
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

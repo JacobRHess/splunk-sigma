@@ -96,6 +96,24 @@ $SPLUNK_HOME/bin/splunk add oneshot samples/attack_samples.jsonl -sourcetype _js
 # Then in Splunk Web:  index=main | sigma rules="*"
 ```
 
+## Two modes: in-Splunk command vs. external service
+
+`splunk-sigma` runs Sigma rules two ways, sharing the same rule files and evaluator:
+
+| Mode | How it runs | Good for |
+|---|---|---|
+| **`\| sigma`** | Inside Splunk as a StreamingCommand | Interactive SPL, dashboards, ad-hoc triage |
+| **`sigma_watch`** | External Python service, calls Splunk's REST API | Always-on detection service, multi-instance monitoring, CI |
+
+```bash
+# Mode 2 — run detections externally against Splunk's REST API (port 8089)
+export SPLUNK_USERNAME=admin SPLUNK_PASSWORD='<pw>'
+python3 scripts/sigma_watch.py --once
+python3 scripts/sigma_watch.py --interval 60 --output-index sigma_alerts
+```
+
+See [`docs/API_MODE.md`](docs/API_MODE.md) for the full API-mode guide.
+
 ## Bundled detections
 
 | Rule | ATT&CK | Severity |

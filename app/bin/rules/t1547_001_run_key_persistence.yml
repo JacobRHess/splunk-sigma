@@ -1,0 +1,26 @@
+title: Registry Run Key Persistence via reg.exe
+id: t1547_001_run_key
+status: experimental
+description: >
+  Detects reg.exe being used to add entries to auto-run registry keys
+  (HKCU/HKLM ...\\CurrentVersion\\Run, RunOnce). A common persistence mechanism.
+references:
+  - https://attack.mitre.org/techniques/T1547/001/
+author: Jacob Hess
+level: high
+tags:
+  - attack.persistence
+  - attack.t1547.001
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\reg.exe'
+    CommandLine|contains:
+      - ' add '
+      - ' ADD '
+    CommandLine|re: '(?i)\\CurrentVersion\\(Run|RunOnce|RunServices|RunServicesOnce)'
+  condition: selection
+falsepositives:
+  - Legitimate software installers registering auto-start entries

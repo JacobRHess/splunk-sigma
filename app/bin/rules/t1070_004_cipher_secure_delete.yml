@@ -1,0 +1,25 @@
+title: Secure File Deletion via cipher.exe
+id: t1070_004_cipher_wipe
+status: experimental
+description: >
+  Detects cipher.exe being run with the /w (wipe free space) flag. Attackers use
+  this to destroy deleted file contents on disk, hampering forensic recovery.
+references:
+  - https://attack.mitre.org/techniques/T1070/004/
+author: Jacob Hess
+level: high
+tags:
+  - attack.defense_evasion
+  - attack.t1070.004
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\cipher.exe'
+    CommandLine|contains:
+      - '/w:'
+      - ' /w '
+  condition: selection
+falsepositives:
+  - Security-conscious admins wiping free space before decommissioning a workstation

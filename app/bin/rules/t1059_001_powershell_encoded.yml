@@ -1,0 +1,29 @@
+title: PowerShell Encoded Command Execution
+id: t1059_001_pwsh_encoded
+status: experimental
+description: >
+  Detects PowerShell being launched with -EncodedCommand (or short forms).
+  Encoding is commonly used by attackers to obfuscate malicious payloads and
+  evade naive command-line string matching.
+references:
+  - https://attack.mitre.org/techniques/T1059/001/
+author: Jacob Hess
+level: high
+tags:
+  - attack.execution
+  - attack.t1059.001
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+    CommandLine|contains:
+      - ' -enc '
+      - ' -EncodedCommand '
+      - ' -ec '
+  condition: selection
+falsepositives:
+  - Legitimate administrative scripts that base64-encode payloads to handle quoting

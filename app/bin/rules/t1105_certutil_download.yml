@@ -1,0 +1,28 @@
+title: Suspicious Download via certutil.exe
+id: t1105_certutil_download
+status: experimental
+description: >
+  Detects certutil.exe being invoked with URL-caching flags to download content
+  from the internet — a well-known living-off-the-land technique.
+references:
+  - https://attack.mitre.org/techniques/T1105/
+  - https://lolbas-project.github.io/lolbas/Binaries/Certutil/
+author: Jacob Hess
+level: high
+tags:
+  - attack.command_and_control
+  - attack.t1105
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\certutil.exe'
+    CommandLine|contains:
+      - '-urlcache'
+      - '-verifyctl'
+      - '-split'
+    CommandLine|re: '(?i)https?://'
+  condition: selection
+falsepositives:
+  - Legitimate admin downloading a CRL / certificate from an internal PKI endpoint

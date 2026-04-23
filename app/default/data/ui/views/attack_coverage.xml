@@ -1,0 +1,88 @@
+<dashboard version="1.1" theme="dark">
+  <label>ATT&amp;CK Coverage</label>
+  <description>Visualizes the MITRE ATT&amp;CK techniques covered by bundled Sigma rules and recent detections.</description>
+
+  <row>
+    <panel>
+      <title>Alerts in the last 24 hours</title>
+      <single>
+        <search>
+          <query>index=* | sigma rules="*" | stats count</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="rangeColors">["0x53a051","0xf8be34","0xdc4e41"]</option>
+        <option name="rangeValues">[1,10]</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Unique rules fired (24h)</title>
+      <single>
+        <search>
+          <query>index=* | sigma rules="*" | stats dc(sigma_rule_id)</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Critical/High alerts (24h)</title>
+      <single>
+        <search>
+          <query>index=* | sigma rules="*" | where sigma_level="critical" OR sigma_level="high" | stats count</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="rangeColors">["0x53a051","0xdc4e41"]</option>
+        <option name="rangeValues">[1]</option>
+      </single>
+    </panel>
+  </row>
+
+  <row>
+    <panel>
+      <title>Alerts by MITRE ATT&amp;CK technique (24h)</title>
+      <chart>
+        <search>
+          <query>index=* | sigma rules="*" | stats count by sigma_attack | sort -count</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.chart">bar</option>
+        <option name="charting.axisTitleX.text">Alerts</option>
+        <option name="charting.axisTitleY.text">ATT&amp;CK technique</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Alerts by severity (24h)</title>
+      <chart>
+        <search>
+          <query>index=* | sigma rules="*" | stats count by sigma_level</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.chart">pie</option>
+      </chart>
+    </panel>
+  </row>
+
+  <row>
+    <panel>
+      <title>Recent detections</title>
+      <table>
+        <search>
+          <query>index=* | sigma rules="*" | table _time, sigma_level, sigma_rule_title, sigma_attack, Image, CommandLine, User | sort -_time</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="count">20</option>
+        <option name="drilldown">row</option>
+      </table>
+    </panel>
+  </row>
+</dashboard>

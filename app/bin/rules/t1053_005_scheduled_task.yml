@@ -1,0 +1,31 @@
+title: Scheduled Task Creation via schtasks.exe
+id: t1053_005_schtasks_create
+status: experimental
+description: >
+  Detects schtasks.exe being used to create a new scheduled task. Attackers use
+  this to establish persistence or execute payloads as SYSTEM.
+references:
+  - https://attack.mitre.org/techniques/T1053/005/
+author: Jacob Hess
+level: medium
+tags:
+  - attack.persistence
+  - attack.privilege_escalation
+  - attack.t1053.005
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    Image|endswith: '\schtasks.exe'
+    CommandLine|contains:
+      - '/create'
+      - '/Create'
+  filter_legit_agents:
+    ParentImage|endswith:
+      - '\SenseIR.exe'
+      - '\MsMpEng.exe'
+  condition: selection and not filter_legit_agents
+falsepositives:
+  - EDR / AV agents that legitimately create scheduled tasks as part of their workflow
+  - Software installers creating update tasks

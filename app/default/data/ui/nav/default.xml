@@ -1,0 +1,5 @@
+<nav search_view="search" color="#4A90E2">
+  <view name="attack_coverage" default="true" />
+  <view name="search" />
+  <view name="reports" />
+</nav>

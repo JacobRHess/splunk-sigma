@@ -18,10 +18,12 @@ import os
 import sys
 from pathlib import Path
 
-# Ensure our bundled engine is importable when Splunk invokes this script.
+# Ensure our bundled engine + vendored libs are importable when Splunk invokes us.
 _HERE = Path(__file__).resolve().parent
-if str(_HERE) not in sys.path:
-    sys.path.insert(0, str(_HERE))
+_LIB = _HERE / "lib"
+for p in (str(_LIB), str(_HERE)):
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 from sigma_engine import Evaluator, load_rules_from_dir  # noqa: E402
 from sigma_engine.rules import filter_rules  # noqa: E402

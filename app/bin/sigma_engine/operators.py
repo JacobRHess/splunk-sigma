@@ -17,6 +17,11 @@ def op_equals(value: Any, pattern: Any) -> bool:
     # Sigma default matching is case-insensitive for strings.
     if isinstance(value, str) and isinstance(pattern, str):
         return value.lower() == pattern.lower()
+    # Splunk often indexes numeric-looking values as strings or ints.
+    # Compare by string representation when types disagree so rules don't
+    # need to care whether the sourcetype parsed a field as int or str.
+    if type(value) is not type(pattern):
+        return _as_str(value).lower() == _as_str(pattern).lower()
     return value == pattern
 
 

@@ -110,6 +110,10 @@ $SPLUNK_HOME/bin/splunk add oneshot samples/attack_samples.jsonl -sourcetype _js
 export SPLUNK_USERNAME=admin SPLUNK_PASSWORD='<pw>'
 python3 scripts/sigma_watch.py --once
 python3 scripts/sigma_watch.py --interval 60 --output-index sigma_alerts
+
+# Or run the full closed-loop demo (clears prior alerts, writes new ones,
+# verifies they landed via SPL — good for live walkthroughs):
+bash scripts/demo_api.sh
 ```
 
 See [`docs/API_MODE.md`](docs/API_MODE.md) for the full API-mode guide.

@@ -35,6 +35,43 @@ Mode 1 (in-Splunk)                 Mode 2 (API)
                                    └──────────────┘
 ```
 
+## Live demo (end-to-end, one command)
+
+`scripts/demo_api.sh` runs the full closed loop — clears prior alerts,
+runs the external service, and verifies the alerts landed via SPL. Good
+for mentor / interview walkthroughs.
+
+```bash
+export SPLUNK_USERNAME=<user> SPLUNK_PASSWORD=<pw>
+bash scripts/demo_api.sh
+```
+
+Output walks through four steps, ending with an SPL query showing the
+alerts now indexed in Splunk and reachable from Splunk Web:
+
+```
+▶ 1/4  Ensuring target index 'sigma_alerts' exists
+▶ 2/4  Clearing previous demo alerts from 'sigma_alerts'
+▶ 3/4  Running sigma_watch — external service calling Splunk's REST API
+        (prints 8 colored alerts)
+▶ 4/4  Verifying alerts landed — querying via SPL
+            sigma_rule_title             sigma_level count
+---------------------------------------- ----------- -----
+LSASS Credential Dump Indicators         critical        2
+PowerShell Encoded Command Execution     high            1
+...
+
+Closed loop demonstrated:
+  external Python service → Splunk REST API → alerts indexed → queryable via SPL
+```
+
+One-time setup: the script uses `| delete` to reset between runs, which
+requires the `can_delete` capability. Grant it once with:
+
+```bash
+$SPLUNK_HOME/bin/splunk edit user <your-user> -role admin -role can_delete
+```
+
 ## Quickstart
 
 ```bash

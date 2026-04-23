@@ -29,6 +29,7 @@ pythonpath = ["app/bin"]
 [tool.ruff]
 line-length = 100
 target-version = "py37"
+extend-exclude = ["app/bin/lib"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP"]

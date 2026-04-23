@@ -38,36 +38,57 @@ Splunk shops want Sigma — vendor-neutral, shareable detections — but the sta
 
 ## Quickstart (no Splunk needed)
 
-The engine runs standalone — useful for CI and for testing rules without spinning up Splunk.
+The engine runs standalone — useful for CI, demos, and testing rules without spinning up Splunk.
 
 ```bash
 git clone https://github.com/<you>/splunk-sigma
 cd splunk-sigma
 pip install .[dev]
+python3 scripts/demo.py samples/attack_samples.jsonl
+```
+
+Sample output:
+
+```
+Loaded 7 rule(s). Scanned 11 event(s).
+
+[HIGH] PowerShell Encoded Command Execution
+  rule: t1059_001_pwsh_encoded    ATT&CK: T1059.001
+  time: 2026-04-22T14:03:11Z      user: CORP\alice
+  evidence: powershell.exe -nop -w hidden -enc JABzAD0ATgBlAHcALQBPAGIAagBlAGMAdAA=
+
+[CRITICAL] LSASS Credential Dump Indicators
+  rule: t1003_001_lsass_dump      ATT&CK: T1003.001
+  time: 2026-04-22T14:05:02Z      user: CORP\attacker
+  evidence: mimikatz.exe "privilege::debug" "sekurlsa::logonpasswords" exit
+
+[HIGH] RDP Logon from External Source
+  rule: t1021_001_rdp_external    ATT&CK: T1021.001
+  time: 2026-04-22T14:11:03Z      user: alice
+  evidence: 203.0.113.42
+
+...
+
+8 alert(s) across 7 rule(s).
+```
+
+Run tests:
+```bash
 PYTHONPATH=app/bin pytest -v
 ```
 
 ## Install into Splunk Enterprise
 
-1. Install [Splunk Enterprise](https://www.splunk.com/en_us/download/splunk-enterprise.html) (free developer license).
-2. Set `SPLUNK_HOME` to your install path (defaults to `/Applications/Splunk` on macOS).
-3. Symlink the app into Splunk and restart:
-   ```bash
-   export SPLUNK_HOME=/Applications/Splunk
-   bash scripts/install_local.sh
-   $SPLUNK_HOME/bin/splunk restart
-   ```
-4. Load the sample attack data:
-   ```bash
-   $SPLUNK_HOME/bin/splunk add oneshot samples/attack_samples.jsonl \
-       -sourcetype _json -index main
-   ```
-5. In Splunk Web, run:
-   ```
-   index=main | sigma rules="*"
-   ```
+See [`docs/SPLUNK_INSTALL.md`](docs/SPLUNK_INSTALL.md) for the full step-by-step install guide, including account creation, sample-data loading, and screenshots to capture.
 
-You should see alerts for all 7 bundled techniques.
+Short version:
+```bash
+export SPLUNK_HOME=/Applications/Splunk
+bash scripts/install_local.sh
+$SPLUNK_HOME/bin/splunk restart
+$SPLUNK_HOME/bin/splunk add oneshot samples/attack_samples.jsonl -sourcetype _json -index main
+# Then in Splunk Web:  index=main | sigma rules="*"
+```
 
 ## Bundled detections
 

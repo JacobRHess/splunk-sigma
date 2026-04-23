@@ -1,5 +1,9 @@
 # splunk-sigma
 
+[![ci](https://github.com/JacobRHess/splunk-sigma/actions/workflows/ci.yml/badge.svg)](https://github.com/JacobRHess/splunk-sigma/actions/workflows/ci.yml)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](app/LICENSE)
+[![python](https://img.shields.io/badge/python-3.7%2B-blue.svg)](pyproject.toml)
+
 **Run [Sigma](https://github.com/SigmaHQ/sigma) detection rules natively inside Splunk** via a custom `| sigma` search command. Bundled content maps to [MITRE ATT&CK](https://attack.mitre.org/) and ships with a coverage dashboard.
 
 ```

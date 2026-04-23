@@ -10,6 +10,8 @@
 index=sysmon EventCode=1 | sigma rules="attack:T1059.001"
 ```
 
+![Splunk search results showing 8 detections across 7 ATT&CK techniques](docs/screenshots/splunk_search_results.png)
+
 ---
 
 ## Why this exists

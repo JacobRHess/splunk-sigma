@@ -4,23 +4,27 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "splunk-sigma"
-version = "0.1.0"
-description = "Splunk app that runs Sigma detection rules natively via a custom | sigma search command"
+version = "0.2.0"
+description = "Splunk app that runs Sigma detection rules natively via a custom | sigma search command. Ships a reusable sigma_engine package."
 requires-python = ">=3.7"
 authors = [{ name = "Jacob Hess" }]
+dependencies = [
+    "pyyaml>=6.0",
+]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
-    "pyyaml>=6.0",
     "ruff>=0.1.0",
     "splunk-sdk>=2.0",
 ]
 
-# This project is a Splunk app, not an installable Python package. We use
-# pyproject.toml only for dev tooling (pytest/ruff config + dev deps).
+# The repo is a Splunk app at heart, but the rule-evaluation core lives in
+# `app/bin/sigma_engine/` and is exposed here as an installable Python
+# package so other tools (e.g. sigma-pipeline) can depend on it directly.
 [tool.setuptools]
-packages = []
+package-dir = { "" = "app/bin" }
+packages = ["sigma_engine"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

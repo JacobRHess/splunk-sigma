@@ -26,7 +26,10 @@ jobs:
           pip install .[dev]
 
       - name: Lint with ruff
-        run: ruff check app/bin tests
+        run: ruff check .
+
+      - name: Check formatting with ruff
+        run: ruff format --check .
 
       - name: Run test suite
         env:

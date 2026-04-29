@@ -1,7 +1,7 @@
 # splunk-sigma
 
 [![ci](https://github.com/JacobRHess/splunk-sigma/actions/workflows/ci.yml/badge.svg)](https://github.com/JacobRHess/splunk-sigma/actions/workflows/ci.yml)
-[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](app/LICENSE)
+[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![python](https://img.shields.io/badge/python-3.7%2B-blue.svg)](pyproject.toml)
 
 **Run [Sigma](https://github.com/SigmaHQ/sigma) detection rules natively inside Splunk** via a custom `| sigma` search command. Bundled content maps to [MITRE ATT&CK](https://attack.mitre.org/) and ships with a coverage dashboard.
@@ -166,11 +166,17 @@ splunk-sigma/
 │   │   └── rules/             bundled Sigma YAML
 │   └── metadata/
 ├── samples/                 attack log fixtures
-├── scripts/                 install_local.sh, package.sh
+├── scripts/                 demo.py, sigma_watch.py, install_local.sh, package.sh, demo_api.sh
 ├── tests/                   pytest suite
+├── docs/                    SPLUNK_INSTALL, API_MODE, screenshots
+├── LICENSE                  MIT
 └── .github/workflows/ci.yml
 ```
 
+## Related projects
+
+- **[`sigma-pipeline`](https://github.com/JacobRHess/sigma-pipeline)** — detection-as-code CI/CD on top of this engine. Adds `lint` / `test` (fixture-driven positive & negative tests) / `diff` / `coverage` (ATT&CK Navigator JSON) / `deploy` (to Splunk via REST). The two repos are designed to be used together: `splunk-sigma` is the runtime, `sigma-pipeline` is the change-management layer around it.
+
 ## License
 
-MIT — see [`app/LICENSE`](app/LICENSE).
+MIT — see [`LICENSE`](LICENSE).

@@ -3,6 +3,7 @@
 Each operator takes a field value from an event and a pattern from the rule,
 and returns True iff the value matches.
 """
+
 from __future__ import annotations
 
 import re

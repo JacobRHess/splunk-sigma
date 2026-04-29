@@ -2,6 +2,7 @@
 
 Given a Rule and an event (dict), determine whether the rule matches.
 """
+
 from __future__ import annotations
 
 import fnmatch
@@ -61,8 +62,10 @@ _TOKEN_RE = re.compile(
 
 
 def _tokenize(expr: str) -> list[str]:
-    return [m.group(0).lower() if m.group(0).lower() in {"and", "or", "not"} else m.group(0)
-            for m in _TOKEN_RE.finditer(expr)]
+    return [
+        m.group(0).lower() if m.group(0).lower() in {"and", "or", "not"} else m.group(0)
+        for m in _TOKEN_RE.finditer(expr)
+    ]
 
 
 def _evaluate_condition(expr: str, selection_results: dict[str, bool]) -> bool:
@@ -137,6 +140,7 @@ def _evaluate_condition(expr: str, selection_results: dict[str, bool]) -> bool:
 
 # --- public API ----------------------------------------------------------------
 
+
 class Evaluator:
     def __init__(self, rules: list[Rule]):
         self.rules = rules
@@ -145,8 +149,7 @@ class Evaluator:
         hits: list[Match] = []
         for rule in self.rules:
             sel_results = {
-                name: _selection_hit(sel, event)
-                for name, sel in rule.selections.items()
+                name: _selection_hit(sel, event) for name, sel in rule.selections.items()
             }
             try:
                 if _evaluate_condition(rule.condition, sel_results):

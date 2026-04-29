@@ -6,6 +6,7 @@ Supports the v1 subset documented in DESIGN.md:
   '1 of selection_*', 'all of selection_*'
 - field modifiers: contains, startswith, endswith, re
 """
+
 from __future__ import annotations
 
 import fnmatch
@@ -21,9 +22,10 @@ ATTACK_TAG_PREFIX = "attack."
 @dataclass
 class FieldMatcher:
     """A single field check: event[field] OP pattern."""
+
     field_name: str
-    operator: str          # "equals" | "contains" | "startswith" | "endswith" | "re"
-    patterns: list[Any]    # list semantics = OR unless 'all' modifier (not in v1)
+    operator: str  # "equals" | "contains" | "startswith" | "endswith" | "re"
+    patterns: list[Any]  # list semantics = OR unless 'all' modifier (not in v1)
 
     def __repr__(self) -> str:
         return f"{self.field_name}|{self.operator}={self.patterns!r}"
@@ -32,6 +34,7 @@ class FieldMatcher:
 @dataclass
 class Selection:
     """A named group of field matchers. All matchers must match (AND) for a selection hit."""
+
     name: str
     matchers: list[FieldMatcher]
 
@@ -41,12 +44,12 @@ class Rule:
     id: str
     title: str
     description: str
-    level: str                          # "low" | "medium" | "high" | "critical"
-    attack: list[str]                   # e.g. ["T1059.001"]
-    logsource: dict[str, str]           # category/product/service
-    selections: dict[str, Selection]    # name → Selection
-    condition: str                      # raw condition string; parsed at evaluation time
-    source_path: str = ""               # for diagnostics
+    level: str  # "low" | "medium" | "high" | "critical"
+    attack: list[str]  # e.g. ["T1059.001"]
+    logsource: dict[str, str]  # category/product/service
+    selections: dict[str, Selection]  # name → Selection
+    condition: str  # raw condition string; parsed at evaluation time
+    source_path: str = ""  # for diagnostics
     tags: list[str] = field(default_factory=list)
 
     def attack_techniques(self) -> list[str]:
@@ -54,7 +57,7 @@ class Rule:
         out = []
         for t in self.tags:
             if t.startswith(ATTACK_TAG_PREFIX):
-                rest = t[len(ATTACK_TAG_PREFIX):]
+                rest = t[len(ATTACK_TAG_PREFIX) :]
                 if rest.lower().startswith("t") and any(c.isdigit() for c in rest):
                     out.append(rest.upper().replace(".", "."))
         return out
@@ -101,11 +104,11 @@ def load_rule_from_file(path: str | Path) -> Rule:
 
     tags = data.get("tags") or []
     attack_ids = [
-        t[len(ATTACK_TAG_PREFIX):].upper()
+        t[len(ATTACK_TAG_PREFIX) :].upper()
         for t in tags
         if isinstance(t, str)
         and t.startswith(ATTACK_TAG_PREFIX)
-        and t[len(ATTACK_TAG_PREFIX):].lower().startswith("t")
+        and t[len(ATTACK_TAG_PREFIX) :].lower().startswith("t")
     ]
 
     return Rule(
@@ -152,6 +155,5 @@ def filter_rules(rules: Iterable[Rule], selector: str) -> list[Rule]:
         pat = selector.split(":", 1)[1]
         return [r for r in rules if fnmatch.fnmatch(r.id, pat)]
     return [
-        r for r in rules
-        if fnmatch.fnmatch(r.id, selector) or fnmatch.fnmatch(r.title, selector)
+        r for r in rules if fnmatch.fnmatch(r.id, selector) or fnmatch.fnmatch(r.title, selector)
     ]

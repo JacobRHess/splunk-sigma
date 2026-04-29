@@ -12,6 +12,7 @@ at least one rule are emitted with these additional fields:
 
 Non-matching events are dropped (filter semantics).
 """
+
 from __future__ import annotations
 
 import os

@@ -11,6 +11,7 @@ Usage:
   python3 scripts/demo.py <logfile> --rules "attack:T1059.001"
   python3 scripts/demo.py <logfile> --format json
 """
+
 from __future__ import annotations
 
 import argparse
@@ -24,12 +25,11 @@ sys.path.insert(0, str(REPO / "app" / "bin"))
 from sigma_engine import Evaluator, load_rules_from_dir  # noqa: E402
 from sigma_engine.rules import filter_rules  # noqa: E402
 
-
 LEVEL_COLORS = {
     "critical": "\033[1;97;41m",  # bold white on red
-    "high":     "\033[1;31m",      # bold red
-    "medium":   "\033[1;33m",      # bold yellow
-    "low":      "\033[1;36m",      # bold cyan
+    "high": "\033[1;31m",  # bold red
+    "medium": "\033[1;33m",  # bold yellow
+    "low": "\033[1;36m",  # bold cyan
 }
 RESET = "\033[0m"
 DIM = "\033[2m"
@@ -47,10 +47,16 @@ def _truncate(s: str, n: int = 90) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument("logfile", help="JSONL file, one event per line")
-    parser.add_argument("--rules-dir", default=str(REPO / "app" / "bin" / "rules"),
-                        help="Directory of Sigma YAML rules (default: bundled)")
+    parser.add_argument(
+        "--rules-dir",
+        default=str(REPO / "app" / "bin" / "rules"),
+        help="Directory of Sigma YAML rules (default: bundled)",
+    )
     parser.add_argument("--rules", default="*", help='Selector (default "*")')
     parser.add_argument("--format", choices=["pretty", "json"], default="pretty")
     parser.add_argument("--no-color", action="store_true")
@@ -60,7 +66,9 @@ def main() -> int:
     selected = filter_rules(all_rules, args.rules)
     evaluator = Evaluator(selected)
 
-    events = [json.loads(line) for line in Path(args.logfile).read_text().splitlines() if line.strip()]
+    events = [
+        json.loads(line) for line in Path(args.logfile).read_text().splitlines() if line.strip()
+    ]
     matches = evaluator.match_many(events)
 
     use_color = not args.no_color and sys.stdout.isatty()
@@ -88,8 +96,10 @@ def main() -> int:
         attack = ",".join(m.rule.attack) or "—"
         print(f"{level_tag} {m.rule.title}")
         print(f"  {DIM}rule:{RESET} {m.rule.id}    {DIM}ATT&CK:{RESET} {attack}")
-        print(f"  {DIM}time:{RESET} {m.event.get('_time', '?')}    "
-              f"{DIM}user:{RESET} {m.event.get('User') or m.event.get('TargetUserName') or '—'}")
+        print(
+            f"  {DIM}time:{RESET} {m.event.get('_time', '?')}    "
+            f"{DIM}user:{RESET} {m.event.get('User') or m.event.get('TargetUserName') or '—'}"
+        )
         cmd = m.event.get("CommandLine") or m.event.get("IpAddress") or ""
         if cmd:
             print(f"  {DIM}evidence:{RESET} {_truncate(str(cmd))}")

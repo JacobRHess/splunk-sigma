@@ -11,6 +11,7 @@ Usage:
   python3 scripts/demo.py <logfile> --rules "attack:T1059.001"
   python3 scripts/demo.py <logfile> --format json
 """
+
 from __future__ import annotations
 
 import argparse
@@ -26,9 +27,9 @@ from sigma_engine.rules import filter_rules  # noqa: E402
 
 LEVEL_COLORS = {
     "critical": "\033[1;97;41m",  # bold white on red
-    "high":     "\033[1;31m",      # bold red
-    "medium":   "\033[1;33m",      # bold yellow
-    "low":      "\033[1;36m",      # bold cyan
+    "high": "\033[1;31m",  # bold red
+    "medium": "\033[1;33m",  # bold yellow
+    "low": "\033[1;36m",  # bold cyan
 }
 RESET = "\033[0m"
 DIM = "\033[2m"
@@ -66,9 +67,7 @@ def main() -> int:
     evaluator = Evaluator(selected)
 
     events = [
-        json.loads(line)
-        for line in Path(args.logfile).read_text().splitlines()
-        if line.strip()
+        json.loads(line) for line in Path(args.logfile).read_text().splitlines() if line.strip()
     ]
     matches = evaluator.match_many(events)
 
@@ -97,8 +96,10 @@ def main() -> int:
         attack = ",".join(m.rule.attack) or "—"
         print(f"{level_tag} {m.rule.title}")
         print(f"  {DIM}rule:{RESET} {m.rule.id}    {DIM}ATT&CK:{RESET} {attack}")
-        print(f"  {DIM}time:{RESET} {m.event.get('_time', '?')}    "
-              f"{DIM}user:{RESET} {m.event.get('User') or m.event.get('TargetUserName') or '—'}")
+        print(
+            f"  {DIM}time:{RESET} {m.event.get('_time', '?')}    "
+            f"{DIM}user:{RESET} {m.event.get('User') or m.event.get('TargetUserName') or '—'}"
+        )
         cmd = m.event.get("CommandLine") or m.event.get("IpAddress") or ""
         if cmd:
             print(f"  {DIM}evidence:{RESET} {_truncate(str(cmd))}")

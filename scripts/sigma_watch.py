@@ -29,6 +29,7 @@ Usage:
 Environment variables (used as defaults, overridden by CLI flags):
   SPLUNK_HOST, SPLUNK_PORT, SPLUNK_USERNAME, SPLUNK_PASSWORD, SPLUNK_SCHEME
 """
+
 from __future__ import annotations
 
 import argparse
@@ -52,18 +53,16 @@ try:
     import splunklib.results as splunk_results  # noqa: E402
 except ImportError:
     sys.stderr.write(
-        "error: splunk-sdk not installed.\n"
-        "  pip install splunk-sdk\n"
-        "  or: pip install .[dev]\n"
+        "error: splunk-sdk not installed.\n  pip install splunk-sdk\n  or: pip install .[dev]\n"
     )
     sys.exit(2)
 
 
 LEVEL_COLORS = {
     "critical": "\033[1;97;41m",
-    "high":     "\033[1;31m",
-    "medium":   "\033[1;33m",
-    "low":      "\033[1;36m",
+    "high": "\033[1;31m",
+    "medium": "\033[1;33m",
+    "low": "\033[1;36m",
 }
 RESET = "\033[0m"
 DIM = "\033[2m"
@@ -144,9 +143,8 @@ def _scan_once(service, evaluator, args, use_color: bool) -> int:
             _print_alert(m, use_color)
             if args.output_index:
                 _write_alert_to_index(service, args.output_index, m)
-    summary = (
-        f"scanned {total_events} event(s), {alerts} alert(s)"
-        + (f", wrote to index={args.output_index}" if args.output_index else "")
+    summary = f"scanned {total_events} event(s), {alerts} alert(s)" + (
+        f", wrote to index={args.output_index}" if args.output_index else ""
     )
     print(_colorize("high" if alerts else "low", summary, use_color))
     return alerts
@@ -158,28 +156,36 @@ def main() -> int:
     )
     parser.add_argument("--host", default=os.environ.get("SPLUNK_HOST", "localhost"))
     parser.add_argument("--port", default=os.environ.get("SPLUNK_PORT", "8089"))
-    parser.add_argument("--scheme", default=os.environ.get("SPLUNK_SCHEME", "https"),
-                        choices=["http", "https"])
+    parser.add_argument(
+        "--scheme", default=os.environ.get("SPLUNK_SCHEME", "https"), choices=["http", "https"]
+    )
     parser.add_argument("--username", default=os.environ.get("SPLUNK_USERNAME"))
     parser.add_argument("--password", default=os.environ.get("SPLUNK_PASSWORD"))
-    parser.add_argument("--search", default='search index=main | fields *',
-                        help='Splunk search (default: "search index=main | fields *")')
+    parser.add_argument(
+        "--search",
+        default="search index=main | fields *",
+        help='Splunk search (default: "search index=main | fields *")',
+    )
     parser.add_argument("--rules-dir", default=str(REPO / "app" / "bin" / "rules"))
     parser.add_argument("--rules", default="*", help='Selector (default "*")')
-    parser.add_argument("--max-events", type=int, default=1000,
-                        help="Max events per scan (default 1000)")
-    parser.add_argument("--output-index", default=None,
-                        help="If set, write alerts back to this Splunk index")
-    parser.add_argument("--once", action="store_true",
-                        help="Run one scan and exit (default)")
-    parser.add_argument("--interval", type=int, default=0,
-                        help="Poll every N seconds (instead of --once)")
+    parser.add_argument(
+        "--max-events", type=int, default=1000, help="Max events per scan (default 1000)"
+    )
+    parser.add_argument(
+        "--output-index", default=None, help="If set, write alerts back to this Splunk index"
+    )
+    parser.add_argument("--once", action="store_true", help="Run one scan and exit (default)")
+    parser.add_argument(
+        "--interval", type=int, default=0, help="Poll every N seconds (instead of --once)"
+    )
     parser.add_argument("--no-color", action="store_true")
     args = parser.parse_args()
 
     if not args.username or not args.password:
-        parser.error("Splunk credentials required: set --username/--password "
-                     "or SPLUNK_USERNAME/SPLUNK_PASSWORD env vars")
+        parser.error(
+            "Splunk credentials required: set --username/--password "
+            "or SPLUNK_USERNAME/SPLUNK_PASSWORD env vars"
+        )
 
     all_rules = load_rules_from_dir(args.rules_dir)
     selected = filter_rules(all_rules, args.rules)

@@ -3,6 +3,7 @@
 Asserts every rule fires at least once against the attack samples, and that
 benign events do not produce false positives.
 """
+
 from __future__ import annotations
 
 import json
@@ -42,9 +43,12 @@ def test_every_rule_fires_at_least_once(rules, events):
 def test_benign_events_do_not_match(rules, events):
     """The two benign events at the end of the sample file should not trigger any rule."""
     ev = Evaluator(rules)
-    benign = [e for e in events
-              if e.get("Image", "").endswith("notepad.exe")
-              or (e.get("EventID") == 4624 and e.get("IpAddress", "").startswith("10."))]
+    benign = [
+        e
+        for e in events
+        if e.get("Image", "").endswith("notepad.exe")
+        or (e.get("EventID") == 4624 and e.get("IpAddress", "").startswith("10."))
+    ]
     assert len(benign) == 2
     for e in benign:
         assert ev.match(e) == [], f"benign event produced false positive: {e}"
@@ -52,6 +56,13 @@ def test_benign_events_do_not_match(rules, events):
 
 def test_attack_techniques_cover_expected(rules):
     technique_ids = sorted({t for r in rules for t in r.attack})
-    expected = {"T1003.001", "T1021.001", "T1053.005", "T1059.001",
-                "T1070.004", "T1105", "T1547.001"}
+    expected = {
+        "T1003.001",
+        "T1021.001",
+        "T1053.005",
+        "T1059.001",
+        "T1070.004",
+        "T1105",
+        "T1547.001",
+    }
     assert set(technique_ids) == expected

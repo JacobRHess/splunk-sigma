@@ -24,7 +24,6 @@ sys.path.insert(0, str(REPO / "app" / "bin"))
 from sigma_engine import Evaluator, load_rules_from_dir  # noqa: E402
 from sigma_engine.rules import filter_rules  # noqa: E402
 
-
 LEVEL_COLORS = {
     "critical": "\033[1;97;41m",  # bold white on red
     "high":     "\033[1;31m",      # bold red
@@ -47,10 +46,16 @@ def _truncate(s: str, n: int = 90) -> str:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument("logfile", help="JSONL file, one event per line")
-    parser.add_argument("--rules-dir", default=str(REPO / "app" / "bin" / "rules"),
-                        help="Directory of Sigma YAML rules (default: bundled)")
+    parser.add_argument(
+        "--rules-dir",
+        default=str(REPO / "app" / "bin" / "rules"),
+        help="Directory of Sigma YAML rules (default: bundled)",
+    )
     parser.add_argument("--rules", default="*", help='Selector (default "*")')
     parser.add_argument("--format", choices=["pretty", "json"], default="pretty")
     parser.add_argument("--no-color", action="store_true")
@@ -60,7 +65,11 @@ def main() -> int:
     selected = filter_rules(all_rules, args.rules)
     evaluator = Evaluator(selected)
 
-    events = [json.loads(line) for line in Path(args.logfile).read_text().splitlines() if line.strip()]
+    events = [
+        json.loads(line)
+        for line in Path(args.logfile).read_text().splitlines()
+        if line.strip()
+    ]
     matches = evaluator.match_many(events)
 
     use_color = not args.no_color and sys.stdout.isatty()
